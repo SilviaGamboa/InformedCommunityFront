@@ -1,0 +1,43 @@
+<div class="login-container">
+
+  <div class="login-card">
+
+    <div class="logo">
+      <h1>Informed Community</h1>
+      <p>Gestión de incidencias comunitarias</p>
+    </div>
+
+    <form [formGroup]="form">
+
+      <div class="form-group">
+        <label>Correo</label>
+        <input
+          type="email"
+          formControlName="correo"
+          placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Ingrese su contraseña">
+      </div>
+
+      <button
+        type="button"
+        class="login-button"
+        (click)="login()">
+        Iniciar sesión
+      </button>
+
+    </form>
+
+    <div class="footer-text">
+      Informed Community © 2026
+    </div>
+
+  </div>
+
+</div>
