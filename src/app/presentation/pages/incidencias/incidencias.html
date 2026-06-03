@@ -1,0 +1,55 @@
+<div class="page">
+
+  <div class="card">
+
+    <div class="header">
+
+      <h1>Reportar Incidencia</h1>
+
+      <p>
+        Registra cualquier problema dentro de la comunidad
+        para que la administración pueda darle seguimiento.
+      </p>
+
+    </div>
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="crearIncidencia()">
+
+      <div class="campo">
+
+        <label>Título</label>
+
+        <input
+          type="text"
+          formControlName="titulo"
+          placeholder="Ej. Lámpara dañada">
+
+      </div>
+
+      <div class="campo">
+
+        <label>Descripción</label>
+
+        <textarea
+          rows="6"
+          formControlName="descripcion"
+          placeholder="Describe detalladamente el problema">
+        </textarea>
+
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="form.invalid">
+
+        Reportar Incidencia
+
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
