@@ -2,6 +2,19 @@
 
   <div class="card">
 
+    <div class="actions">
+
+      <button
+        type="button"
+        class="back-button"
+        (click)="volver()">
+
+        Volver
+
+      </button>
+
+    </div>
+
     <div class="header">
 
       <h1>Reportar Incidencia</h1>
@@ -41,6 +54,7 @@
       </div>
 
       <button
+        class="submit-button"
         type="submit"
         [disabled]="form.invalid">
 

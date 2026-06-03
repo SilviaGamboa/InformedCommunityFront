@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { CrearIncidenciaUseCase }
 from '../../../application/use-cases/incidencias/crear-incidencia.usecase';
@@ -26,7 +27,8 @@ export class IncidenciasComponent {
   constructor(
     private crearIncidenciaUseCase:
       CrearIncidenciaUseCase,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
 
     this.form = this.fb.group({
@@ -65,5 +67,12 @@ export class IncidenciasComponent {
           );
         }
       });
+  }
+
+  volver(): void {
+
+    this.router.navigate([
+      '/home'
+    ]);
   }
 }

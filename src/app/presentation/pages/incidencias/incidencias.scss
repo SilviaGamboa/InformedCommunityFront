@@ -26,6 +26,47 @@
     0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
+.actions {
+
+  display: flex;
+  justify-content: flex-end;
+
+  margin-bottom: 1.25rem;
+}
+
+.back-button {
+
+  width: auto;
+
+  padding: .7rem 1.05rem;
+
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+
+  background: white;
+
+  color: #374151;
+
+  font-size: .95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, .06);
+
+  transition: .2s;
+}
+
+.back-button:hover {
+
+  transform: translateY(-2px);
+
+  border-color: #2563eb;
+
+  color: #2563eb;
+}
+
 .header {
 
   margin-bottom: 2rem;
@@ -83,7 +124,7 @@ textarea:focus {
     0 0 0 3px rgba(37, 99, 235, .15);
 }
 
-button {
+.submit-button {
 
   width: 100%;
 
@@ -106,12 +147,12 @@ button {
   transition: .2s;
 }
 
-button:hover {
+.submit-button:hover {
 
   transform: translateY(-2px);
 }
 
-button:disabled {
+.submit-button:disabled {
 
   background: #9ca3af;
 
