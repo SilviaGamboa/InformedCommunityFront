@@ -1,0 +1,96 @@
+<div class="page">
+
+  <section class="panel">
+
+    <div class="topbar">
+
+      <div class="title-block">
+
+        <h1>Mis Incidencias</h1>
+
+        <p>
+          Revisa tus reportes y su estado actual.
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="back-button"
+        (click)="volver()">
+
+        Volver
+
+      </button>
+
+    </div>
+
+    <div
+      *ngIf="cargando"
+      class="state-card">
+
+      Cargando incidencias...
+
+    </div>
+
+    <div
+      *ngIf="!cargando && error"
+      class="state-card error">
+
+      {{ error }}
+
+    </div>
+
+    <div
+      *ngIf="!cargando && !error && incidencias.length === 0"
+      class="state-card">
+
+      Todavia no tienes incidencias reportadas.
+
+    </div>
+
+    <div
+      *ngIf="!cargando && !error && incidencias.length > 0"
+      class="incidencias-list">
+
+      <article
+        *ngFor="let incidencia of incidencias"
+        class="incidencia-item">
+
+        <div class="status-column">
+
+          <span
+            class="status-badge"
+            [ngClass]="estadoClase(incidencia.estado)">
+
+            {{ incidencia.estado }}
+
+          </span>
+
+        </div>
+
+        <div class="content">
+
+          <div class="item-header">
+
+            <h2>{{ incidencia.titulo }}</h2>
+
+            <time>
+              {{ incidencia.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}
+            </time>
+
+          </div>
+
+          <p>
+            {{ incidencia.descripcion }}
+          </p>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</div>

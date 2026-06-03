@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CrearIncidenciaDto } from '../../domain/dtos/crear-incidencia.dto';
+import { Incidencia } from '../../domain/entities/incidencia.entity';
 import { IncidenciaRepository } from '../../domain/interfaces/incidencia.repository';
 
 import { IncidenciaService } from '../services/incidencia.service';
@@ -23,5 +24,13 @@ export class IncidenciaRepositoryImpl
 
     return this.incidenciaService
       .crearIncidencia(dto);
+  }
+
+  obtenerPorUsuario(
+    idUsuario: number
+  ): Observable<Incidencia[]> {
+
+    return this.incidenciaService
+      .obtenerPorUsuario(idUsuario);
   }
 }

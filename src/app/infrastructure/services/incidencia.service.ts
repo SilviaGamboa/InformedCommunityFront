@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { CrearIncidenciaDto } from '../../domain/dtos/crear-incidencia.dto';
+import { Incidencia } from '../../domain/entities/incidencia.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,15 @@ export class IncidenciaService {
     return this.http.post(
       this.apiUrl,
       dto
+    );
+  }
+
+  obtenerPorUsuario(
+    idUsuario: number
+  ): Observable<Incidencia[]> {
+
+    return this.http.get<Incidencia[]>(
+      `${this.apiUrl}/usuario/${idUsuario}`
     );
   }
 }

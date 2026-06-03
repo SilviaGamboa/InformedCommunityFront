@@ -19,4 +19,11 @@ export class HomeComponent {
       '/incidencias'
     ]);
   }
+
+  irAMisIncidencias() {
+
+    this.router.navigate([
+      '/mis-incidencias'
+    ]);
+  }
 }
