@@ -3,63 +3,48 @@
   <div class="card">
 
     <div class="actions">
-
-      <button
-        type="button"
-        class="back-button"
-        (click)="volver()">
-
-        Volver
-
-      </button>
-
+      <button type="button" class="back-button" (click)="volver()">Volver</button>
     </div>
 
     <div class="header">
-
       <h1>Reportar Incidencia</h1>
-
-      <p>
-        Registra cualquier problema dentro de la comunidad
-        para que la administración pueda darle seguimiento.
-      </p>
-
+      <p>Registra cualquier problema dentro de la comunidad para que la administración pueda darle seguimiento.</p>
     </div>
 
-    <form
-      [formGroup]="form"
-      (ngSubmit)="crearIncidencia()">
+    <form [formGroup]="form" (ngSubmit)="crearIncidencia()">
 
       <div class="campo">
-
         <label>Título</label>
-
-        <input
-          type="text"
-          formControlName="titulo"
-          placeholder="Ej. Lámpara dañada">
-
+        <input type="text" formControlName="titulo" placeholder="Ej. Lámpara dañada">
       </div>
 
       <div class="campo">
-
         <label>Descripción</label>
-
-        <textarea
-          rows="6"
-          formControlName="descripcion"
-          placeholder="Describe detalladamente el problema">
-        </textarea>
-
+        <textarea rows="6" formControlName="descripcion" placeholder="Describe detalladamente el problema"></textarea>
       </div>
 
-      <button
-        class="submit-button"
-        type="submit"
-        [disabled]="form.invalid">
+      <!-- Adjuntar imagen -->
+      <div class="campo">
+        <label>Imagen (opcional)</label>
 
+        <div class="upload-area" *ngIf="!previewUrl" (click)="fileInput.click()">
+          <span class="upload-icon">&#128247;</span>
+          <p>Haz clic para adjuntar una imagen</p>
+          <p class="upload-hint">JPG o PNG · Máx. 5MB</p>
+        </div>
+
+        <input #fileInput type="file" accept=".jpg,.jpeg,.png" class="hidden-input" (change)="onArchivoSeleccionado($event)">
+
+        <p class="error-imagen" *ngIf="errorImagen">{{ errorImagen }}</p>
+
+        <div class="preview-container" *ngIf="previewUrl">
+          <img [src]="previewUrl" alt="Vista previa" class="preview-img">
+          <button type="button" class="quitar-btn" (click)="quitarImagen()">&#10005; Quitar imagen</button>
+        </div>
+      </div>
+
+      <button class="submit-button" type="submit" [disabled]="form.invalid">
         Reportar Incidencia
-
       </button>
 
     </form>

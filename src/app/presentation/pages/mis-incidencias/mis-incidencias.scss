@@ -217,6 +217,22 @@ time {
   line-height: 1.55;
 }
 
+.incidencia-img {
+
+  display: block;
+
+  margin-top: 1rem;
+
+  width: 100%;
+  max-height: 220px;
+
+  object-fit: cover;
+
+  border-radius: 10px;
+
+  border: 1px solid #e5e7eb;
+}
+
 .state-card {
 
   padding: 2rem;

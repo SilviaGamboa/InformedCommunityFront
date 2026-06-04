@@ -5,4 +5,5 @@ export interface Incidencia {
   descripcion: string;
   estado: string;
   fechaCreacion: Date;
+  imagenUrl?: string;
 }

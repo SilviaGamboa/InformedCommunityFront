@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 import { ObtenerIncidenciasUsuarioUseCase }
 from '../../../application/use-cases/incidencias/obtener-incidencias-usuario.usecase';
@@ -20,6 +21,7 @@ export class MisIncidenciasComponent implements OnInit {
   incidencias: Incidencia[] = [];
   cargando = true;
   error = '';
+  readonly storageUrl = environment.storageUrl;
 
   constructor(
     private obtenerIncidenciasUsuarioUseCase:

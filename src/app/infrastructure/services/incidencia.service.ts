@@ -20,13 +20,18 @@ export class IncidenciaService {
   ) {}
 
   crearIncidencia(
-    dto: CrearIncidenciaDto
+    dto: CrearIncidenciaDto,
+    imagen?: File
   ): Observable<any> {
 
-    return this.http.post(
-      this.apiUrl,
-      dto
-    );
+    const formData = new FormData();
+    formData.append('titulo', dto.titulo);
+    formData.append('descripcion', dto.descripcion);
+    if (imagen) {
+      formData.append('imagen', imagen);
+    }
+
+    return this.http.post(this.apiUrl, formData);
   }
 
   obtenerPorUsuario(

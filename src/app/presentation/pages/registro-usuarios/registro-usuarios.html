@@ -1,0 +1,57 @@
+<div class="page-container">
+
+  <div class="header">
+    <button class="back-button" (click)="volver()">&#8592; Volver</button>
+    <h1>Registro de Usuarios</h1>
+    <p>Crea una nueva cuenta de usuario en la plataforma.</p>
+  </div>
+
+  <div class="form-card">
+
+    <form [formGroup]="form">
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" formControlName="nombre" placeholder="Nombre"
+            [class.input-error]="form.get('nombre')?.invalid && form.get('nombre')?.touched">
+        </div>
+
+        <div class="form-group">
+          <label>Apellidos</label>
+          <input type="text" formControlName="apellidos" placeholder="Apellidos"
+            [class.input-error]="form.get('apellidos')?.invalid && form.get('apellidos')?.touched">
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label>Correo</label>
+        <input type="email" formControlName="correo" placeholder="correo@ejemplo.com"
+          [class.input-error]="form.get('correo')?.invalid && form.get('correo')?.touched">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres"
+          [class.input-error]="form.get('password')?.invalid && form.get('password')?.touched">
+      </div>
+
+      <div class="form-group">
+        <label>Rol</label>
+        <select formControlName="rol">
+          <option value="usuario">Usuario</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+
+      <button type="button" class="submit-button" (click)="registrar()">
+        Registrar Usuario
+      </button>
+
+    </form>
+
+  </div>
+
+</div>

@@ -19,11 +19,12 @@ export class IncidenciaRepositoryImpl
   ) {}
 
   crearIncidencia(
-    dto: CrearIncidenciaDto
+    dto: CrearIncidenciaDto,
+    imagen?: File
   ): Observable<any> {
 
     return this.incidenciaService
-      .crearIncidencia(dto);
+      .crearIncidencia(dto, imagen);
   }
 
   obtenerPorUsuario(
