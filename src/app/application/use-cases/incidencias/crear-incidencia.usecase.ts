@@ -18,10 +18,11 @@ export class CrearIncidenciaUseCase {
   ) {}
 
   execute(
-    dto: CrearIncidenciaDto
+    dto: CrearIncidenciaDto,
+    imagen?: File
   ): Observable<any> {
 
     return this.repository
-      .crearIncidencia(dto);
+      .crearIncidencia(dto, imagen);
   }
 }

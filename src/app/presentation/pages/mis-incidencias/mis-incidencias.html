@@ -85,6 +85,12 @@
             {{ incidencia.descripcion }}
           </p>
 
+          <img
+            *ngIf="incidencia.imagenUrl"
+            [src]="storageUrl + incidencia.imagenUrl"
+            alt="Imagen de la incidencia"
+            class="incidencia-img">
+
         </div>
 
       </article>

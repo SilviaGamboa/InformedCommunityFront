@@ -58,9 +58,8 @@ form: FormGroup;
           JSON.stringify(response)
         );
 
-        this.router.navigate([
-          '/home'
-        ]);
+        const destino = response.rol === 'admin' ? '/admin-home' : '/home';
+        this.router.navigate([destino]);
       }
     });
   }

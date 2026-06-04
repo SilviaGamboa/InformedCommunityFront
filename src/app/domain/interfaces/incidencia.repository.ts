@@ -5,7 +5,8 @@ import { Incidencia } from '../entities/incidencia.entity';
 export abstract class IncidenciaRepository {
 
   abstract crearIncidencia(
-    dto: CrearIncidenciaDto
+    dto: CrearIncidenciaDto,
+    imagen?: File
   ): Observable<any>;
 
   abstract obtenerPorUsuario(

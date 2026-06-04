@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { LoginDto } from '../../domain/dtos/login.dto';
 
 import { LoginResponseDto } from '../../domain/dtos/login-response.dto';
+import { RegistrarUsuarioDto } from '../../domain/dtos/registrar-usuario.dto';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -28,5 +29,9 @@ export class AuthService {
       `${this.apiUrl}/login`,
       dto
     );
+  }
+
+  registrar(dto: RegistrarUsuarioDto): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/registrar`, dto);
   }
 }
