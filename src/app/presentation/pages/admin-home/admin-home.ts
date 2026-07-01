@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { TokenService } from '../../../infrastructure/services/token.service';
 
 @Component({
   selector: 'app-admin-home',
@@ -8,9 +9,35 @@ import { Router } from '@angular/router';
   styleUrls: ['./admin-home.scss']
 })
 export class AdminHomeComponent {
-  constructor(private router: Router) {}
+  menuActual: 'principal' | 'incidencias' = 'principal';
+
+  constructor(
+    private router: Router,
+    private tokenService: TokenService
+  ) {}
 
   irARegistroUsuarios() {
     this.router.navigate(['/registro-usuarios']);
+  }
+
+  mostrarMenuIncidencias() {
+    this.menuActual = 'incidencias';
+  }
+
+  mostrarMenuPrincipal() {
+    this.menuActual = 'principal';
+  }
+
+  visualizarIncidencias() {
+    this.router.navigate(['/visualizar-incidencias']);
+  }
+
+  cambiarEstadoIncidencias() {
+    alert('Cambio de Estado de Incidencias: Esta funcionalidad se implementará próximamente.');
+  }
+
+  cerrarSesion() {
+    this.tokenService.clear();
+    this.router.navigate(['/login']);
   }
 }

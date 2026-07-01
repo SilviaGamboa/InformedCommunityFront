@@ -1,0 +1,136 @@
+<div class="home-container">
+
+  <header class="main-header">
+    <div class="header-logo">
+      <span class="logo-text">InformedCommunity <span class="badge">Admin</span></span>
+    </div>
+    <button class="logout-btn" (click)="cerrarSesion()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="logout-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+      </svg>
+      <span>Cerrar Sesión</span>
+    </button>
+  </header>
+
+  <div class="navigation-bar">
+    <button class="back-btn" (click)="volver()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="back-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>
+      <span>Volver al Panel</span>
+    </button>
+  </div>
+
+  <div class="welcome-section">
+    <h1>Visualización de Incidencias</h1>
+    <p>Listado de todos los reportes de la comunidad y control de estados.</p>
+  </div>
+
+  <!-- Barra de Filtros -->
+  <div class="filter-bar">
+    <span class="filter-label">Filtrar por Estado:</span>
+    <div class="filter-options">
+      @for (estado of estadosDisponibles; track estado) {
+        <button 
+          class="filter-btn" 
+          [class.active]="filtroSeleccionado === estado"
+          (click)="cambiarFiltro(estado)">
+          {{ estado === 'todos' ? 'Todos' : estado }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Contenido Principal (Listado) -->
+  @if (cargando) {
+    <div class="state-card loading">
+      <div class="spinner"></div>
+      <p>Cargando incidencias...</p>
+    </div>
+  } @else if (error) {
+    <div class="state-card error">
+      <p>{{ error }}</p>
+      <button class="retry-btn" (click)="cargarIncidencias()">Reintentar</button>
+    </div>
+  } @else if (incidencias.length === 0) {
+    <div class="state-card empty">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="empty-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-.621-.504-1.125-1.125-1.125H9.75M8.25 21h8.25c.621 0 1.125-.504 1.125-1.125V11.25c0-.621-.504-1.125-1.125-1.125H8.25c-.621 0-1.125.504-1.125 1.125v8.625c0 .621.504 1.125 1.125 1.125z" />
+      </svg>
+      <p>No se encontraron incidencias con el estado seleccionado.</p>
+    </div>
+  } @else {
+    <div class="incidencias-list">
+      @for (incidencia of incidencias; track incidencia.id) {
+        <article class="incidencia-item" (click)="abrirDetalle(incidencia.id)">
+          <div class="status-column">
+            <span class="status-badge" [ngClass]="estadoClase(incidencia.estado)">
+              {{ incidencia.estado }}
+            </span>
+          </div>
+
+          <div class="content">
+            <div class="item-header">
+              <h2>{{ incidencia.titulo }}</h2>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <!-- Modal de Detalle -->
+  @if (mostrarModalDetalle) {
+    <div class="modal-overlay" (click)="cerrarModal()">
+      <div class="modal-container" (click)="$event.stopPropagation()">
+        <header class="modal-header">
+          <h2>Detalle de Incidencia</h2>
+          <button class="close-btn" (click)="cerrarModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="close-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+
+        <div class="modal-body">
+          @if (cargandoDetalle) {
+            <div class="modal-loading">
+              <div class="spinner"></div>
+              <p>Cargando detalles de incidencia...</p>
+            </div>
+          } @else if (incidenciaDetalle) {
+            <div class="detail-content">
+              <div class="detail-header-info">
+                <span class="status-badge" [ngClass]="estadoClase(incidenciaDetalle.estado)">
+                  {{ incidenciaDetalle.estado }}
+                </span>
+              </div>
+              
+              <h3 class="detail-title">{{ incidenciaDetalle.titulo }}</h3>
+              
+              <div class="detail-meta">
+                <span class="meta-label">Fecha de Registro:</span>
+                <span class="meta-value">{{ incidenciaDetalle.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</span>
+              </div>
+
+              <div class="detail-description-section">
+                <span class="meta-label">Descripción:</span>
+                <p class="detail-description">{{ incidenciaDetalle.descripcion }}</p>
+              </div>
+
+              @if (incidenciaDetalle.imagenUrl) {
+                <div class="detail-image-section">
+                  <span class="meta-label">Evidencia Adjunta:</span>
+                  <div class="image-wrapper">
+                    <img [src]="storageUrl + incidenciaDetalle.imagenUrl" alt="Evidencia de incidencia" class="detail-image" />
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

@@ -5,6 +5,7 @@ import { IncidenciasComponent } from './presentation/pages/incidencias/incidenci
 import { MisIncidenciasComponent } from './presentation/pages/mis-incidencias/mis-incidencias';
 import { AdminHomeComponent } from './presentation/pages/admin-home/admin-home';
 import { RegistroUsuariosComponent } from './presentation/pages/registro-usuarios/registro-usuarios';
+import { VisualizarIncidenciasComponent } from './presentation/pages/visualizar-incidencias/visualizar-incidencias';
 
 export const routes: Routes = [
   {
@@ -35,5 +36,9 @@ export const routes: Routes = [
   {
     path: 'registro-usuarios',
     component: RegistroUsuariosComponent
+  },
+  {
+    path: 'visualizar-incidencias',
+    component: VisualizarIncidenciasComponent
   }
 ];
