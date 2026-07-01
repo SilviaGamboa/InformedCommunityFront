@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CrearIncidenciaDto } from '../../domain/dtos/crear-incidencia.dto';
 import { Incidencia } from '../../domain/entities/incidencia.entity';
+import { ActualizarEstadoIncidenciaDto } from '../../domain/dtos/actualizar-estado-incidencia.dto';
+import { ComentarioIncidencia } from '../../domain/entities/comentario-incidencia.entity';
 
 @Injectable({
   providedIn: 'root'
@@ -53,5 +55,18 @@ export class IncidenciaService {
 
   obtenerPorId(id: number): Observable<Incidencia> {
     return this.http.get<Incidencia>(`${this.apiUrl}/${id}`);
+  }
+
+  actualizarEstado(
+    id: number,
+    dto: ActualizarEstadoIncidenciaDto
+  ): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/estado`, dto);
+  }
+
+  obtenerComentarios(
+    id: number
+  ): Observable<ComentarioIncidencia[]> {
+    return this.http.get<ComentarioIncidencia[]>(`${this.apiUrl}/${id}/comentarios`);
   }
 }
