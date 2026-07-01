@@ -42,4 +42,16 @@ export class IncidenciaService {
       `${this.apiUrl}/usuario/${idUsuario}`
     );
   }
+
+  obtenerTodas(): Observable<Incidencia[]> {
+    return this.http.get<Incidencia[]>(this.apiUrl);
+  }
+
+  obtenerPorEstado(estado: string): Observable<Incidencia[]> {
+    return this.http.get<Incidencia[]>(`${this.apiUrl}/estado/${estado}`);
+  }
+
+  obtenerPorId(id: number): Observable<Incidencia> {
+    return this.http.get<Incidencia>(`${this.apiUrl}/${id}`);
+  }
 }

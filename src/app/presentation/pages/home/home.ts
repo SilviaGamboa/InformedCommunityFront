@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { TokenService } from '../../../infrastructure/services/token.service';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +11,8 @@ import { Router } from '@angular/router';
 export class HomeComponent {
 
   constructor(
-    private router: Router
+    private router: Router,
+    private tokenService: TokenService
   ) {}
 
   irAIncidencias() {
@@ -25,5 +27,10 @@ export class HomeComponent {
     this.router.navigate([
       '/mis-incidencias'
     ]);
+  }
+
+  cerrarSesion() {
+    this.tokenService.clear();
+    this.router.navigate(['/login']);
   }
 }

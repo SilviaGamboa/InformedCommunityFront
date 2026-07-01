@@ -12,4 +12,10 @@ export abstract class IncidenciaRepository {
   abstract obtenerPorUsuario(
     idUsuario: number
   ): Observable<Incidencia[]>;
+
+  abstract obtenerTodas(): Observable<Incidencia[]>;
+
+  abstract obtenerPorEstado(estado: string): Observable<Incidencia[]>;
+
+  abstract obtenerPorId(id: number): Observable<Incidencia>;
 }

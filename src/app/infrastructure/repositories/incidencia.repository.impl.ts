@@ -34,4 +34,16 @@ export class IncidenciaRepositoryImpl
     return this.incidenciaService
       .obtenerPorUsuario(idUsuario);
   }
+
+  obtenerTodas(): Observable<Incidencia[]> {
+    return this.incidenciaService.obtenerTodas();
+  }
+
+  obtenerPorEstado(estado: string): Observable<Incidencia[]> {
+    return this.incidenciaService.obtenerPorEstado(estado);
+  }
+
+  obtenerPorId(id: number): Observable<Incidencia> {
+    return this.incidenciaService.obtenerPorId(id);
+  }
 }
