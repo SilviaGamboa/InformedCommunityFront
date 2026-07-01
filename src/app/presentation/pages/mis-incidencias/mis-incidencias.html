@@ -55,7 +55,8 @@
 
       <article
         *ngFor="let incidencia of incidencias"
-        class="incidencia-item">
+        class="incidencia-item"
+        (click)="abrirDetalle(incidencia)">
 
         <div class="status-column">
 
@@ -96,6 +97,75 @@
       </article>
 
     </div>
+
+    <ng-container *ngIf="mostrarModalDetalle && incidenciaDetalle">
+      <div class="modal-overlay" (click)="cerrarModal()">
+        <div class="modal-container" (click)="$event.stopPropagation()">
+          <header class="modal-header">
+            <h2>Detalle de Incidencia</h2>
+            <button class="close-btn" (click)="cerrarModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="close-icon">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </header>
+
+          <div class="modal-body">
+            <div class="detail-content">
+              <div class="detail-header-info">
+                <span class="status-badge" [ngClass]="estadoClase(incidenciaDetalle.estado)">
+                  {{ incidenciaDetalle.estado }}
+                </span>
+              </div>
+
+              <h3 class="detail-title">{{ incidenciaDetalle.titulo }}</h3>
+
+              <div class="detail-meta">
+                <span class="meta-label">Fecha de Registro:</span>
+                <span class="meta-value">{{ incidenciaDetalle.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</span>
+              </div>
+
+              <div class="detail-description-section">
+                <span class="meta-label">Descripción:</span>
+                <p class="detail-description">{{ incidenciaDetalle.descripcion }}</p>
+              </div>
+
+              <div *ngIf="incidenciaDetalle.imagenUrl" class="detail-image-section">
+                <span class="meta-label">Evidencia Adjunta:</span>
+                <div class="image-wrapper">
+                  <img [src]="storageUrl + incidenciaDetalle.imagenUrl" alt="Evidencia de incidencia" class="detail-image" />
+                </div>
+              </div>
+
+              <div class="comment-section">
+                <div class="section-title">Historial de Comentarios</div>
+
+                <div *ngIf="cargandoComentarios" class="section-loading">
+                  <div class="spinner"></div>
+                  <p>Cargando comentarios...</p>
+                </div>
+
+                <div *ngIf="!cargandoComentarios && comentariosError" class="section-error">{{ comentariosError }}</div>
+
+                <p *ngIf="!cargandoComentarios && !comentariosError && comentarios.length === 0" class="section-empty">
+                  No hay comentarios registrados para esta incidencia.
+                </p>
+
+                <div *ngIf="!cargandoComentarios && !comentariosError && comentarios.length > 0" class="comentarios-list">
+                  <article *ngFor="let comentario of comentarios; trackBy: trackByComentarioId" class="comentario-item">
+                    <div class="comentario-header">
+                      <span class="comentario-author">{{ comentario.autor || 'Administrador' }}</span>
+                      <time>{{ comentario.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</time>
+                    </div>
+                    <p>{{ comentario.comentario }}</p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
   </section>
 

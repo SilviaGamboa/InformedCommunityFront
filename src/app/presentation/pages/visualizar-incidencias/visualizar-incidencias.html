@@ -30,57 +30,52 @@
   <div class="filter-bar">
     <span class="filter-label">Filtrar por Estado:</span>
     <div class="filter-options">
-      @for (estado of estadosDisponibles; track estado) {
-        <button 
-          class="filter-btn" 
-          [class.active]="filtroSeleccionado === estado"
-          (click)="cambiarFiltro(estado)">
-          {{ estado === 'todos' ? 'Todos' : estado }}
-        </button>
-      }
+      <button
+        *ngFor="let estado of estadosDisponibles"
+        class="filter-btn"
+        [class.active]="filtroSeleccionado === estado"
+        (click)="cambiarFiltro(estado)">
+        {{ estado === 'todos' ? 'Todos' : estado }}
+      </button>
     </div>
   </div>
 
   <!-- Contenido Principal (Listado) -->
-  @if (cargando) {
-    <div class="state-card loading">
-      <div class="spinner"></div>
-      <p>Cargando incidencias...</p>
-    </div>
-  } @else if (error) {
-    <div class="state-card error">
-      <p>{{ error }}</p>
-      <button class="retry-btn" (click)="cargarIncidencias()">Reintentar</button>
-    </div>
-  } @else if (incidencias.length === 0) {
-    <div class="state-card empty">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="empty-icon">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-.621-.504-1.125-1.125-1.125H9.75M8.25 21h8.25c.621 0 1.125-.504 1.125-1.125V11.25c0-.621-.504-1.125-1.125-1.125H8.25c-.621 0-1.125.504-1.125 1.125v8.625c0 .621.504 1.125 1.125 1.125z" />
-      </svg>
-      <p>No se encontraron incidencias con el estado seleccionado.</p>
-    </div>
-  } @else {
-    <div class="incidencias-list">
-      @for (incidencia of incidencias; track incidencia.id) {
-        <article class="incidencia-item" (click)="abrirDetalle(incidencia.id)">
-          <div class="status-column">
-            <span class="status-badge" [ngClass]="estadoClase(incidencia.estado)">
-              {{ incidencia.estado }}
-            </span>
-          </div>
+  <div *ngIf="cargando" class="state-card loading">
+    <div class="spinner"></div>
+    <p>Cargando incidencias...</p>
+  </div>
 
-          <div class="content">
-            <div class="item-header">
-              <h2>{{ incidencia.titulo }}</h2>
-            </div>
-          </div>
-        </article>
-      }
-    </div>
-  }
+  <div *ngIf="!cargando && error" class="state-card error">
+    <p>{{ error }}</p>
+    <button class="retry-btn" (click)="cargarIncidencias()">Reintentar</button>
+  </div>
+
+  <div *ngIf="!cargando && !error && incidencias.length === 0" class="state-card empty">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="empty-icon">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-.621-.504-1.125-1.125-1.125H9.75M8.25 21h8.25c.621 0 1.125-.504 1.125-1.125V11.25c0-.621-.504-1.125-1.125-1.125H8.25c-.621 0-1.125.504-1.125 1.125v8.625c0 .621.504 1.125 1.125 1.125z" />
+    </svg>
+    <p>No se encontraron incidencias con el estado seleccionado.</p>
+  </div>
+
+  <div *ngIf="!cargando && !error && incidencias.length > 0" class="incidencias-list">
+    <article *ngFor="let incidencia of incidencias" class="incidencia-item" (click)="abrirDetalle(incidencia.id)">
+      <div class="status-column">
+        <span class="status-badge" [ngClass]="estadoClase(incidencia.estado)">
+          {{ incidencia.estado }}
+        </span>
+      </div>
+
+      <div class="content">
+        <div class="item-header">
+          <h2>{{ incidencia.titulo }}</h2>
+        </div>
+      </div>
+    </article>
+  </div>
 
   <!-- Modal de Detalle -->
-  @if (mostrarModalDetalle) {
+  <ng-container *ngIf="mostrarModalDetalle">
     <div class="modal-overlay" (click)="cerrarModal()">
       <div class="modal-container" (click)="$event.stopPropagation()">
         <header class="modal-header">
@@ -93,44 +88,95 @@
         </header>
 
         <div class="modal-body">
-          @if (cargandoDetalle) {
-            <div class="modal-loading">
-              <div class="spinner"></div>
-              <p>Cargando detalles de incidencia...</p>
+          <div *ngIf="cargandoDetalle" class="modal-loading">
+            <div class="spinner"></div>
+            <p>Cargando detalles de incidencia...</p>
+          </div>
+
+          <div *ngIf="!cargandoDetalle && incidenciaDetalle" class="detail-content">
+            <div class="detail-header-info">
+              <span class="status-badge" [ngClass]="estadoClase(incidenciaDetalle.estado)">
+                {{ incidenciaDetalle.estado }}
+              </span>
             </div>
-          } @else if (incidenciaDetalle) {
-            <div class="detail-content">
-              <div class="detail-header-info">
-                <span class="status-badge" [ngClass]="estadoClase(incidenciaDetalle.estado)">
-                  {{ incidenciaDetalle.estado }}
-                </span>
+
+            <h3 class="detail-title">{{ incidenciaDetalle.titulo }}</h3>
+
+            <div class="detail-meta">
+              <span class="meta-label">Fecha de Registro:</span>
+              <span class="meta-value">{{ incidenciaDetalle.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</span>
+            </div>
+
+            <div class="detail-description-section">
+              <span class="meta-label">Descripción:</span>
+              <p class="detail-description">{{ incidenciaDetalle.descripcion }}</p>
+            </div>
+
+            <div *ngIf="incidenciaDetalle.imagenUrl" class="detail-image-section">
+              <span class="meta-label">Evidencia Adjunta:</span>
+              <div class="image-wrapper">
+                <img [src]="storageUrl + incidenciaDetalle.imagenUrl" alt="Evidencia de incidencia" class="detail-image" />
               </div>
-              
-              <h3 class="detail-title">{{ incidenciaDetalle.titulo }}</h3>
-              
-              <div class="detail-meta">
-                <span class="meta-label">Fecha de Registro:</span>
-                <span class="meta-value">{{ incidenciaDetalle.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</span>
+            </div>
+
+            <div class="comment-section">
+              <div class="section-title">Historial de Comentarios</div>
+
+              <div *ngIf="cargandoComentarios" class="section-loading">
+                <div class="spinner"></div>
+                <p>Cargando comentarios...</p>
               </div>
 
-              <div class="detail-description-section">
-                <span class="meta-label">Descripción:</span>
-                <p class="detail-description">{{ incidenciaDetalle.descripcion }}</p>
-              </div>
+              <div *ngIf="!cargandoComentarios && comentariosError" class="section-error">{{ comentariosError }}</div>
 
-              @if (incidenciaDetalle.imagenUrl) {
-                <div class="detail-image-section">
-                  <span class="meta-label">Evidencia Adjunta:</span>
-                  <div class="image-wrapper">
-                    <img [src]="storageUrl + incidenciaDetalle.imagenUrl" alt="Evidencia de incidencia" class="detail-image" />
+              <p *ngIf="!cargandoComentarios && !comentariosError && comentarios.length === 0" class="section-empty">
+                No hay comentarios registrados para esta incidencia.
+              </p>
+
+              <div *ngIf="!cargandoComentarios && !comentariosError && comentarios.length > 0" class="comentarios-list">
+                <article *ngFor="let comentario of comentarios" class="comentario-item">
+                  <div class="comentario-header">
+                    <span class="comentario-author">{{ comentario.autor || 'Administrador' }}</span>
+                    <time>{{ comentario.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</time>
                   </div>
-                </div>
-              }
+                  <p>{{ comentario.comentario }}</p>
+                </article>
+              </div>
             </div>
-          }
+
+            <div *ngIf="esAdmin" class="admin-form">
+              <div class="section-title">Actualizar Estado</div>
+
+              <div class="form-field">
+                <label>Estado</label>
+                <select [(ngModel)]="estadoSeleccionado" name="estadoSeleccionado">
+                  <option value="">Selecciona un estado</option>
+                  <option *ngFor="let estado of estadosPermitidos" [value]="estado">{{ estado }}</option>
+                </select>
+                <p *ngIf="validacionEstado" class="field-error">{{ validacionEstado }}</p>
+              </div>
+
+              <div class="form-field">
+                <label>Comentario</label>
+                <textarea rows="4" [(ngModel)]="nuevoComentario" name="nuevoComentario" placeholder="Describe el motivo del cambio de estado"></textarea>
+                <p *ngIf="validacionComentario" class="field-error">{{ validacionComentario }}</p>
+              </div>
+
+              <div *ngIf="mensajeErrorModal" class="form-error">{{ mensajeErrorModal }}</div>
+              <div *ngIf="mensajeExito" class="form-success">{{ mensajeExito }}</div>
+
+              <button
+                class="primary-button"
+                type="button"
+                (click)="guardarCambioEstado()"
+                [disabled]="cargandoActualizacion">
+                {{ cargandoActualizacion ? 'Guardando...' : 'Guardar cambios' }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  }
+  </ng-container>
 
 </div>
