@@ -20,8 +20,12 @@ export class AdminHomeComponent {
     this.router.navigate(['/registro-usuarios']);
   }
 
+  irAPublicarAnuncios() {
+    this.router.navigate(['/publicar-anuncios']);
+  }
+
   mostrarMenuIncidencias() {
-    this.menuActual = 'incidencias';
+    this.router.navigate(['/visualizar-incidencias']);
   }
 
   mostrarMenuPrincipal() {
