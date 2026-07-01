@@ -29,6 +29,10 @@ export class HomeComponent {
     ]);
   }
 
+  irAAnuncios() {
+    this.router.navigate(['/anuncios']);
+  }
+
   cerrarSesion() {
     this.tokenService.clear();
     this.router.navigate(['/login']);
