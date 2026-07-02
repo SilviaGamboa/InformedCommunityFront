@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
-
-import { ObtenerIncidenciasUsuarioUseCase }
-from '../../../application/use-cases/incidencias/obtener-incidencias-usuario.usecase';
+import { TokenService } from '../../../infrastructure/services/token.service';
+import { AlertService } from '../../../infrastructure/services/alert.service';
+import { ObtenerIncidenciasUsuarioUseCase } from '../../../application/use-cases/incidencias/obtener-incidencias-usuario.usecase';
 import { ObtenerComentariosIncidenciaUseCase } from '../../../application/use-cases/incidencias/obtener-comentarios-incidencia.usecase';
 import { Incidencia } from '../../../domain/entities/incidencia.entity';
 import { ComentarioIncidencia } from '../../../domain/entities/comentario-incidencia.entity';
@@ -32,11 +32,11 @@ export class MisIncidenciasComponent implements OnInit {
   comentariosError = '';
 
   constructor(
-    private obtenerIncidenciasUsuarioUseCase:
-      ObtenerIncidenciasUsuarioUseCase,
-    private obtenerComentariosIncidenciaUseCase:
-      ObtenerComentariosIncidenciaUseCase,
-    private router: Router
+    private obtenerIncidenciasUsuarioUseCase: ObtenerIncidenciasUsuarioUseCase,
+    private obtenerComentariosIncidenciaUseCase: ObtenerComentariosIncidenciaUseCase,
+    private router: Router,
+    private tokenService: TokenService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -47,8 +47,14 @@ export class MisIncidenciasComponent implements OnInit {
     const usuario = this.obtenerUsuario();
 
     if (!usuario?.id) {
-      this.error = 'No se encontro el usuario actual.';
+      this.error = 'No se encontró el usuario actual.';
       this.cargando = false;
+
+      this.alertService.error(
+        'Usuario no encontrado',
+        'No fue posible obtener la información del usuario actual.'
+      );
+
       return;
     }
 
@@ -58,13 +64,18 @@ export class MisIncidenciasComponent implements OnInit {
     this.obtenerIncidenciasUsuarioUseCase
       .execute(usuario.id)
       .subscribe({
-        next: incidencias => {
+        next: (incidencias) => {
           this.incidencias = incidencias;
           this.cargando = false;
         },
         error: () => {
           this.error = 'No se pudieron cargar tus incidencias.';
           this.cargando = false;
+
+          this.alertService.error(
+            'Error al cargar incidencias',
+            'No fue posible obtener tus incidencias.'
+          );
         }
       });
   }
@@ -87,13 +98,19 @@ export class MisIncidenciasComponent implements OnInit {
     this.comentariosError = '';
 
     this.obtenerComentariosIncidenciaUseCase.execute(id).subscribe({
-      next: comentarios => {
+      next: (comentarios) => {
         this.comentarios = comentarios;
         this.cargandoComentarios = false;
       },
       error: () => {
-        this.comentariosError = 'No se pudieron cargar los comentarios de esta incidencia.';
+        this.comentariosError =
+          'No se pudieron cargar los comentarios de esta incidencia.';
         this.cargandoComentarios = false;
+
+        this.alertService.error(
+          'Error al cargar comentarios',
+          'No fue posible obtener los comentarios de la incidencia.'
+        );
       }
     });
   }
@@ -110,7 +127,10 @@ export class MisIncidenciasComponent implements OnInit {
       .replace(/\s+/g, '-');
   }
 
-  trackByComentarioId(_index: number, comentario: ComentarioIncidencia): number {
+  trackByComentarioId(
+    _index: number,
+    comentario: ComentarioIncidencia
+  ): number {
     return comentario.id;
   }
 
@@ -123,5 +143,17 @@ export class MisIncidenciasComponent implements OnInit {
     } catch {
       return null;
     }
+  }
+
+  cerrarSesion(): void {
+    this.alertService.confirm(
+      'Cerrar sesión',
+      '¿Desea cerrar la sesión actual?'
+    ).then((confirmado) => {
+      if (confirmado) {
+        this.tokenService.clear();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

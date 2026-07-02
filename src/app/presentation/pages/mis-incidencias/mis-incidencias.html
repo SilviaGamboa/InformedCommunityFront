@@ -1,85 +1,85 @@
 <div class="page">
+  <header class="main-header">
+    <div class="header-logo">
+      <span class="logo-text">InformedCommunity</span>
+    </div>
+    <button class="logout-btn" (click)="cerrarSesion()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="logout-icon"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+        />
+      </svg>
+      <span>Cerrar Sesión</span>
+    </button>
+  </header>
+
+  <div class="navigation-bar">
+    <button class="back-btn" (click)="volver()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2.5"
+        stroke="currentColor"
+        class="back-icon"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+        />
+      </svg>
+      <span>Volver al inicio</span>
+    </button>
+  </div>
 
   <section class="panel">
-
-    <div class="topbar">
-
+    <div class="topbar"> 
       <div class="title-block">
-
         <h1>Mis Incidencias</h1>
 
-        <p>
-          Revisa tus reportes y su estado actual.
-        </p>
-
+        <p>Revisa tus reportes y su estado actual.</p>
       </div>
-
-      <button
-        type="button"
-        class="back-button"
-        (click)="volver()">
-
-        Volver
-
-      </button>
-
     </div>
 
-    <div
-      *ngIf="cargando"
-      class="state-card">
+    <div *ngIf="cargando" class="state-card">Cargando incidencias...</div>
 
-      Cargando incidencias...
-
-    </div>
-
-    <div
-      *ngIf="!cargando && error"
-      class="state-card error">
-
+    <div *ngIf="!cargando && error" class="state-card error">
       {{ error }}
-
     </div>
 
-    <div
-      *ngIf="!cargando && !error && incidencias.length === 0"
-      class="state-card">
-
+    <div *ngIf="!cargando && !error && incidencias.length === 0" class="state-card">
       Todavia no tienes incidencias reportadas.
-
     </div>
 
-    <div
-      *ngIf="!cargando && !error && incidencias.length > 0"
-      class="incidencias-list">
-
+    <div *ngIf="!cargando && !error && incidencias.length > 0" class="incidencias-list">
       <article
         *ngFor="let incidencia of incidencias"
         class="incidencia-item"
-        (click)="abrirDetalle(incidencia)">
-
+        (click)="abrirDetalle(incidencia)"
+      >
         <div class="status-column">
-
-          <span
-            class="status-badge"
-            [ngClass]="estadoClase(incidencia.estado)">
-
+          <span class="status-badge" [ngClass]="estadoClase(incidencia.estado)">
             {{ incidencia.estado }}
-
           </span>
-
         </div>
 
         <div class="content">
-
           <div class="item-header">
-
             <h2>{{ incidencia.titulo }}</h2>
 
             <time>
-              {{ incidencia.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}
+              {{ incidencia.fechaCreacion | date: 'dd/MM/yyyy, h:mm a' }}
             </time>
-
           </div>
 
           <p>
@@ -90,12 +90,10 @@
             *ngIf="incidencia.imagenUrl"
             [src]="storageUrl + incidencia.imagenUrl"
             alt="Imagen de la incidencia"
-            class="incidencia-img">
-
+            class="incidencia-img"
+          />
         </div>
-
       </article>
-
     </div>
 
     <ng-container *ngIf="mostrarModalDetalle && incidenciaDetalle">
@@ -104,7 +102,14 @@
           <header class="modal-header">
             <h2>Detalle de Incidencia</h2>
             <button class="close-btn" (click)="cerrarModal()">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="close-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="close-icon"
+              >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -122,7 +127,9 @@
 
               <div class="detail-meta">
                 <span class="meta-label">Fecha de Registro:</span>
-                <span class="meta-value">{{ incidenciaDetalle.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</span>
+                <span class="meta-value">{{
+                  incidenciaDetalle.fechaCreacion | date: 'dd/MM/yyyy, h:mm a'
+                }}</span>
               </div>
 
               <div class="detail-description-section">
@@ -133,7 +140,11 @@
               <div *ngIf="incidenciaDetalle.imagenUrl" class="detail-image-section">
                 <span class="meta-label">Evidencia Adjunta:</span>
                 <div class="image-wrapper">
-                  <img [src]="storageUrl + incidenciaDetalle.imagenUrl" alt="Evidencia de incidencia" class="detail-image" />
+                  <img
+                    [src]="storageUrl + incidenciaDetalle.imagenUrl"
+                    alt="Evidencia de incidencia"
+                    class="detail-image"
+                  />
                 </div>
               </div>
 
@@ -145,17 +156,30 @@
                   <p>Cargando comentarios...</p>
                 </div>
 
-                <div *ngIf="!cargandoComentarios && comentariosError" class="section-error">{{ comentariosError }}</div>
+                <div *ngIf="!cargandoComentarios && comentariosError" class="section-error">
+                  {{ comentariosError }}
+                </div>
 
-                <p *ngIf="!cargandoComentarios && !comentariosError && comentarios.length === 0" class="section-empty">
+                <p
+                  *ngIf="!cargandoComentarios && !comentariosError && comentarios.length === 0"
+                  class="section-empty"
+                >
                   No hay comentarios registrados para esta incidencia.
                 </p>
 
-                <div *ngIf="!cargandoComentarios && !comentariosError && comentarios.length > 0" class="comentarios-list">
-                  <article *ngFor="let comentario of comentarios; trackBy: trackByComentarioId" class="comentario-item">
+                <div
+                  *ngIf="!cargandoComentarios && !comentariosError && comentarios.length > 0"
+                  class="comentarios-list"
+                >
+                  <article
+                    *ngFor="let comentario of comentarios; trackBy: trackByComentarioId"
+                    class="comentario-item"
+                  >
                     <div class="comentario-header">
-                      <span class="comentario-author">{{ comentario.autor || 'Administrador' }}</span>
-                      <time>{{ comentario.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</time>
+                      <span class="comentario-author">{{
+                        comentario.autor || 'Administrador'
+                      }}</span>
+                      <time>{{ comentario.fechaCreacion | date: 'dd/MM/yyyy, h:mm a' }}</time>
                     </div>
                     <p>{{ comentario.comentario }}</p>
                   </article>
@@ -166,7 +190,5 @@
         </div>
       </div>
     </ng-container>
-
   </section>
-
 </div>

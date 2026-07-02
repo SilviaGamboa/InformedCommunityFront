@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenService } from '../../../infrastructure/services/token.service';
+import { AlertService } from '../../../infrastructure/services/alert.service';
 
 @Component({
   selector: 'app-admin-home',
@@ -13,7 +14,8 @@ export class AdminHomeComponent {
 
   constructor(
     private router: Router,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private alertService: AlertService
   ) {}
 
   irARegistroUsuarios() {
@@ -37,11 +39,23 @@ export class AdminHomeComponent {
   }
 
   cambiarEstadoIncidencias() {
-    alert('Cambio de Estado de Incidencias: Esta funcionalidad se implementará próximamente.');
+    this.alertService.info(
+      'Próximamente',
+      'La funcionalidad para cambiar el estado de las incidencias estará disponible en una próxima versión.'
+    );
   }
 
-  cerrarSesion() {
-    this.tokenService.clear();
-    this.router.navigate(['/login']);
+  cerrarSesion(): void {
+    this.alertService
+      .confirm(
+        'Cerrar sesión',
+        '¿Desea cerrar la sesión actual?'
+      )
+      .then((confirmado) => {
+        if (confirmado) {
+          this.tokenService.clear();
+          this.router.navigate(['/login']);
+        }
+      });
   }
 }
