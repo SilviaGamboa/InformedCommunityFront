@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TokenService } from '../../../infrastructure/services/token.service';
 import { ObtenerAnunciosUseCase } from '../../../application/use-cases/anuncios/obtener-anuncios.usecase';
 import { Anuncio } from '../../../domain/entities/anuncio.entity';
+import { AlertService } from '../../../infrastructure/services/alert.service';
 
 @Component({
   selector: 'app-anuncios',
@@ -21,7 +22,8 @@ export class AnunciosComponent implements OnInit {
   constructor(
     private obtenerAnunciosUseCase: ObtenerAnunciosUseCase,
     private tokenService: TokenService,
-    private router: Router
+    private router: Router,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +41,12 @@ export class AnunciosComponent implements OnInit {
       },
       error: () => {
         this.error = 'No se pudieron cargar los anuncios. Inténtalo de nuevo.';
+
+        this.alertService.error(
+          'Error al cargar anuncios',
+          'No fue posible obtener los anuncios.'
+        );
+
         this.cargando = false;
       }
     });
@@ -49,7 +57,14 @@ export class AnunciosComponent implements OnInit {
   }
 
   cerrarSesion(): void {
-    this.tokenService.clear();
-    this.router.navigate(['/login']);
+    this.alertService.confirm(
+      'Cerrar sesión',
+      '¿Desea cerrar la sesión actual?'
+    ).then((confirmado) => {
+      if (confirmado) {
+        this.tokenService.clear();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

@@ -10,7 +10,10 @@ import { ObtenerIncidenciasEstadoUseCase } from '../../../application/use-cases/
 import { ObtenerIncidenciaIdUseCase } from '../../../application/use-cases/incidencias/obtener-incidencia-id.usecase';
 import { ObtenerComentariosIncidenciaUseCase } from '../../../application/use-cases/incidencias/obtener-comentarios-incidencia.usecase';
 import { ActualizarEstadoIncidenciaUseCase } from '../../../application/use-cases/incidencias/actualizar-estado-incidencia.usecase';
+
 import { TokenService } from '../../../infrastructure/services/token.service';
+import { AlertService } from '../../../infrastructure/services/alert.service';
+
 import { Incidencia } from '../../../domain/entities/incidencia.entity';
 import { ComentarioIncidencia } from '../../../domain/entities/comentario-incidencia.entity';
 import { ActualizarEstadoIncidenciaDto } from '../../../domain/dtos/actualizar-estado-incidencia.dto';
@@ -48,8 +51,20 @@ export class VisualizarIncidenciasComponent implements OnInit {
 
   readonly storageUrl = environment.storageUrl;
 
-  estadosDisponibles = ['todos', 'Abierto', 'En revisión', 'Revisado', 'Archivado'];
-  estadosPermitidos = ['Abierto', 'En revisión', 'Revisado', 'Archivado'];
+  estadosDisponibles = [
+    'todos',
+    'Abierto',
+    'En revisión',
+    'Revisado',
+    'Archivado'
+  ];
+
+  estadosPermitidos = [
+    'Abierto',
+    'En revisión',
+    'Revisado',
+    'Archivado'
+  ];
 
   constructor(
     private obtenerTodasUseCase: ObtenerTodasIncidenciasUseCase,
@@ -58,7 +73,8 @@ export class VisualizarIncidenciasComponent implements OnInit {
     private obtenerComentariosIncidenciaUseCase: ObtenerComentariosIncidenciaUseCase,
     private actualizarEstadoIncidenciaUseCase: ActualizarEstadoIncidenciaUseCase,
     private tokenService: TokenService,
-    private router: Router
+    private router: Router,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -78,13 +94,20 @@ export class VisualizarIncidenciasComponent implements OnInit {
       error: () => {
         this.error = 'No se pudieron cargar las incidencias.';
         this.cargando = false;
+
+        this.alertService.error(
+          'Error al cargar incidencias',
+          'No fue posible obtener la lista de incidencias.'
+        );
       }
     };
 
     if (this.filtroSeleccionado === 'todos') {
       this.obtenerTodasUseCase.execute().subscribe(observer);
     } else {
-      this.obtenerPorEstadoUseCase.execute(this.filtroSeleccionado).subscribe(observer);
+      this.obtenerPorEstadoUseCase
+        .execute(this.filtroSeleccionado)
+        .subscribe(observer);
     }
   }
 
@@ -107,13 +130,18 @@ export class VisualizarIncidenciasComponent implements OnInit {
 
     this.obtenerPorIdUseCase.execute(id).subscribe({
       next: (incidencia: Incidencia) => {
+        console.log(incidencia);
         this.incidenciaDetalle = incidencia;
         this.estadoSeleccionado = incidencia.estado;
         this.cargandoDetalle = false;
         this.cargarComentarios(incidencia.id);
       },
       error: () => {
-        alert('No se pudo obtener el detalle de la incidencia.');
+        this.alertService.error(
+          'Error',
+          'No se pudo obtener el detalle de la incidencia.'
+        );
+
         this.cerrarModal();
       }
     });
@@ -129,14 +157,17 @@ export class VisualizarIncidenciasComponent implements OnInit {
         this.cargandoComentarios = false;
       },
       error: () => {
-        this.comentariosError = 'No se pudieron cargar los comentarios de esta incidencia.';
+        this.comentariosError =
+          'No se pudieron cargar los comentarios de esta incidencia.';
         this.cargandoComentarios = false;
       }
     });
   }
 
   guardarCambioEstado(): void {
+
     this.limpiarValidaciones();
+
     if (!this.incidenciaDetalle) {
       return;
     }
@@ -159,6 +190,7 @@ export class VisualizarIncidenciasComponent implements OnInit {
     this.cargandoActualizacion = true;
     this.mensajeErrorModal = '';
     this.mensajeExito = '';
+
     const incidenciaId = this.incidenciaDetalle.id;
 
     const dto: ActualizarEstadoIncidenciaDto = {
@@ -166,16 +198,21 @@ export class VisualizarIncidenciasComponent implements OnInit {
       comentario: comentarioTrim
     };
 
-    this.actualizarEstadoIncidenciaUseCase.execute(incidenciaId, dto)
+    this.actualizarEstadoIncidenciaUseCase
+      .execute(incidenciaId, dto)
       .subscribe({
         next: () => {
+
           if (this.incidenciaDetalle) {
             this.incidenciaDetalle.estado = this.estadoSeleccionado;
           }
+
           this.mensajeExito = 'Estado actualizado correctamente.';
           this.nuevoComentario = '';
+
           this.cargarComentarios(incidenciaId);
           this.cargarIncidencias();
+
           this.cargandoActualizacion = false;
         },
         error: (error: HttpErrorResponse) => {
@@ -197,8 +234,17 @@ export class VisualizarIncidenciasComponent implements OnInit {
   }
 
   cerrarSesion(): void {
-    this.tokenService.clear();
-    this.router.navigate(['/login']);
+    this.alertService
+      .confirm(
+        'Cerrar sesión',
+        '¿Desea cerrar la sesión actual?'
+      )
+      .then((confirmado) => {
+        if (confirmado) {
+          this.tokenService.clear();
+          this.router.navigate(['/login']);
+        }
+      });
   }
 
   estadoClase(estado: string): string {
@@ -217,6 +263,7 @@ export class VisualizarIncidenciasComponent implements OnInit {
 
   private obtenerUsuario(): { rol?: string } | null {
     const usuario = localStorage.getItem('usuario');
+
     if (!usuario) {
       return null;
     }
@@ -236,18 +283,24 @@ export class VisualizarIncidenciasComponent implements OnInit {
   }
 
   private mapearError(error: HttpErrorResponse): string {
+
     if (error.status === 400) {
       return 'Datos inválidos. Verifica estado y comentario.';
     }
+
     if (error.status === 401) {
       return 'Debes iniciar sesión para realizar esta acción.';
     }
+
     if (error.status === 403) {
       return 'No tienes permisos para cambiar el estado.';
     }
+
     if (error.status === 404) {
       return 'No se encontró la incidencia.';
     }
+
     return 'Error del servidor. Intenta nuevamente más tarde.';
   }
+
 }

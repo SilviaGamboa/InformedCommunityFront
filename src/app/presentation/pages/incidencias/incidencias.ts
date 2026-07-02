@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CrearIncidenciaUseCase } from '../../../application/use-cases/incidencias/crear-incidencia.usecase';
+import { TokenService } from '../../../infrastructure/services/token.service';
+import { AlertService } from '../../../infrastructure/services/alert.service';
 
 @Component({
   selector: 'app-incidencias',
@@ -21,7 +23,9 @@ export class IncidenciasComponent {
   constructor(
     private crearIncidenciaUseCase: CrearIncidenciaUseCase,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private tokenService: TokenService,
+    private alertService: AlertService
   ) {
     this.form = this.fb.group({
       titulo: ['', Validators.required],
@@ -30,6 +34,7 @@ export class IncidenciasComponent {
   }
 
   onArchivoSeleccionado(event: Event): void {
+
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -37,16 +42,30 @@ export class IncidenciasComponent {
     const extensionesPermitidas = ['image/jpeg', 'image/jpg', 'image/png'];
 
     if (!extensionesPermitidas.includes(archivo.type)) {
+
       this.errorImagen = 'Solo se permiten imágenes JPG o PNG.';
       this.imagenSeleccionada = null;
       this.previewUrl = null;
+
+      this.alertService.warning(
+        'Formato no permitido',
+        'Solo se permiten imágenes JPG o PNG.'
+      );
+
       return;
     }
 
     if (archivo.size > 5 * 1024 * 1024) {
-      this.errorImagen = 'La imagen no puede superar los 5MB.';
+
+      this.errorImagen = 'La imagen no puede superar los 5 MB.';
       this.imagenSeleccionada = null;
       this.previewUrl = null;
+
+      this.alertService.warning(
+        'Imagen demasiado grande',
+        'La imagen no puede superar los 5 MB.'
+      );
+
       return;
     }
 
@@ -54,7 +73,10 @@ export class IncidenciasComponent {
     this.imagenSeleccionada = archivo;
 
     const reader = new FileReader();
-    reader.onload = () => { this.previewUrl = reader.result as string; };
+    reader.onload = () => {
+      this.previewUrl = reader.result as string;
+    };
+
     reader.readAsDataURL(archivo);
   }
 
@@ -65,23 +87,66 @@ export class IncidenciasComponent {
   }
 
   crearIncidencia(): void {
-    if (this.form.invalid) return;
+
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+
+      this.alertService.warning(
+        'Formulario incompleto',
+        'Complete el título y la descripción de la incidencia.'
+      );
+
+      return;
+    }
 
     this.crearIncidenciaUseCase
-      .execute(this.form.getRawValue(), this.imagenSeleccionada ?? undefined)
+      .execute(
+        this.form.getRawValue(),
+        this.imagenSeleccionada ?? undefined
+      )
       .subscribe({
+
         next: () => {
-          alert('Incidencia creada correctamente');
+
+          this.alertService.success(
+            'Incidencia registrada',
+            'La incidencia fue enviada correctamente.'
+          );
+
           this.form.reset();
           this.quitarImagen();
+
         },
+
         error: () => {
-          alert('Error al crear la incidencia');
+
+          this.alertService.error(
+            'Error al registrar la incidencia',
+            'Inténtelo nuevamente.'
+          );
+
         }
+
       });
+
   }
 
   volver(): void {
     this.router.navigate(['/home']);
+  }
+
+  cerrarSesion(): void {
+
+    this.alertService.confirm(
+      'Cerrar sesión',
+      '¿Desea cerrar la sesión actual?'
+    ).then((confirmado) => {
+
+      if (confirmado) {
+        this.tokenService.clear();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }
